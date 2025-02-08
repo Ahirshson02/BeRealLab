@@ -17,7 +17,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
-
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
@@ -33,6 +32,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
 
         // TODO: Pt 1 - Check for cached user for persisted log in.
+        if User.current != nil{
+            login()
+        }
 
     }
 
@@ -43,7 +45,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     private func logOut() {
         // TODO: Pt 1 - Log out Parse user.
-
+        User.logout{ [weak self] result in
+            switch result{
+            case .success: //pass user to login page
+                DispatchQueue.main.async{
+                    let storyboard = UIStoryboard(name: Constants.storyboardIdentifier, bundle: nil)
+                    let viewController = storyboard.instantiateViewController(withIdentifier: Constants.loginNavigationControllerIdentifier)
+                    self?.window?.rootViewController = viewController
+                }
+            case .failure(let error):
+            print("Log out error: \(error)")
+            }
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

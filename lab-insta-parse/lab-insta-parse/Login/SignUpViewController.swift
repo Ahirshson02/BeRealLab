@@ -36,8 +36,20 @@ class SignUpViewController: UIViewController {
         }
 
         // TODO: Pt 1 - Parse user sign up
+        var newUser = User(username: username, email: email, password: password)
+        newUser.signup{ [weak self] result in
+            switch result{
+            case .success(let user):
+                print("Successfully signed up user \(user)")
+                NotificationCenter.default.post(name: Notification.Name("login"), object: nil)
+                
+            case .failure(let error):
+                self?.showAlert(description: error.localizedDescription)
+            }
+        }
+        
 
-    }
+    } //end onSignUpTapped
 
     private func showAlert(description: String?) {
         let alertController = UIAlertController(title: "Unable to Sign Up", message: description ?? "Unknown error", preferredStyle: .alert)

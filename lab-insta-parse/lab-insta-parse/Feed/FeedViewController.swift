@@ -7,8 +7,7 @@
 
 import UIKit
 
-// TODO: Import Parse Swift
-
+import ParseSwift
 
 class FeedViewController: UIViewController {
 
@@ -38,12 +37,24 @@ class FeedViewController: UIViewController {
     private func queryPosts() {
         // TODO: Pt 1 - Query Posts
 // https://github.com/parse-community/Parse-Swift/blob/3d4bb13acd7496a49b259e541928ad493219d363/ParseSwift.playground/Pages/2%20-%20Finding%20Objects.xcplaygroundpage/Contents.swift#L66
-
-
-    }
+        
+        let query = Post.query() //fetches and orders
+            .include("user")
+            .order([.descending("createdAt")])
+        
+        query.find { [weak self] result in
+            switch result{
+                case .success(let posts):
+                    self?.posts = posts
+            case .failure(let error):
+                self?.showAlert(description: error.localizedDescription)
+            }
+        }
+    } //end queryPosts
 
     @IBAction func onLogOutTapped(_ sender: Any) {
         showConfirmLogoutAlert()
+        
     }
 
     private func showConfirmLogoutAlert() {
